@@ -101,17 +101,66 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for enhanced styling and animations
+# Custom CSS for enhanced styling and animations with dark mode support
 st.markdown("""
 <style>
     /* Main styling */
-    .stApp {
-        background-color: #f8f9fa;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    [data-testid="stAppViewContainer"] {
+        background-color: var(--background-color);
+        color: var(--text-color);
+        transition: all 0.3s ease;
     }
+
+    /* Define CSS variables for light/dark mode */
+    :root {
+        --background-color: #f8f9fa;
+        --text-color: #333333;
+        --card-bg: white;
+        --card-border: #dee2e6;
+        --header-bg: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+        --kpi-value-color: #1a2a6c;
+        --kpi-label-color: #6c757d;
+        --tab-bg: white;
+        --tab-active-bg: linear-gradient(135deg, #1a2a6c, #b21f1f);
+        --insight-box-bg: #f0f8ff;
+        --graph-card-bg: white;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --background-color: #0e1117;
+            --text-color: #f0f2f6;
+            --card-bg: #262730;
+            --card-border: #444;
+            --header-bg: linear-gradient(135deg, #0d1b2a, #1b263b, #0d1b2a);
+            --kpi-value-color: #f0f2f6;
+            --kpi-label-color: #adb5bd;
+            --tab-bg: #262730;
+            --tab-active-bg: linear-gradient(135deg, #0d1b2a, #1b263b);
+            --insight-box-bg: #1a2a6c;
+            --graph-card-bg: #262730;
+        }
+
+        /* Plotly chart adjustments for dark mode */
+        .js-plotly-plot .plotly, .js-plotly-plot .plotly div {
+            background-color: transparent !important;
+        }
+
+        /* Streamlit component adjustments */
+        .stSelectbox, .stMultiSelect, .stDateInput, .stRadio, .stCheckbox {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .stTextInput>div>div>input, .stNumberInput>div>div>input {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+    }
+
     /* Header styling */
     .header {
-        background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+        background: var(--header-bg);
         color: white;
         border-radius: 10px;
         padding: 20px;
@@ -119,9 +168,10 @@ st.markdown("""
         margin-bottom: 25px;
         animation: fadeIn 1s ease-in-out;
     }
+
     /* KPI styling */
     .kpi-card {
-        background: white;
+        background: var(--card-bg);
         border-radius: 10px;
         padding: 15px;
         box-shadow: 0 4px 6px rgba(0,0,0,0.05);
@@ -133,6 +183,7 @@ st.markdown("""
         display: flex;
         flex-direction: column;
         justify-content: center;
+        color: var(--text-color);
     }
     .kpi-card:hover {
         transform: translateY(-5px);
@@ -142,14 +193,15 @@ st.markdown("""
     .kpi-value {
         font-size: 28px;
         font-weight: 700;
-        color: #1a2a6c;
+        color: var(--kpi-value-color);
         animation: pulse 2s infinite;
         margin-bottom: 5px;
     }
     .kpi-label {
         font-size: 14px;
-        color: #6c757d;
+        color: var(--kpi-label-color);
     }
+
     /* Tab styling */
     .stTabs [data-baseweb="tab-list"] {
         gap: 10px;
@@ -157,18 +209,20 @@ st.markdown("""
     .stTabs [data-baseweb="tab"] {
         height: 50px;
         padding: 0 20px;
-        background: white;
+        background: var(--tab-bg);
         border-radius: 10px 10px 0 0;
-        border: 1px solid #dee2e6 !important;
+        border: 1px solid var(--card-border) !important;
         font-weight: 600;
         transition: all 0.3s ease;
         animation: fadeIn 0.5s ease-out;
+        color: var(--text-color);
     }
     .stTabs [aria-selected="true"] {
-        background: linear-gradient(135deg, #1a2a6c, #b21f1f) !important;
+        background: var(--tab-active-bg) !important;
         color: white !important;
         box-shadow: 0 4px 8px rgba(26, 42, 108, 0.2);
     }
+
     /* Button styling */
     .stButton>button {
         background: linear-gradient(135deg, #1a2a6c, #b21f1f);
@@ -183,28 +237,38 @@ st.markdown("""
         transform: scale(1.05);
         box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
+
     /* Graph card styling */
     .graph-card {
-        background: white;
+        background: var(--graph-card-bg);
         border-radius: 10px;
         padding: 15px;
         box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         margin-bottom: 20px;
         transition: all 0.3s ease;
         animation: fadeIn 0.7s ease-out;
+        color: var(--text-color);
     }
     .graph-card:hover {
         box-shadow: 0 8px 15px rgba(0,0,0,0.1);
     }
+
     /* Insight box styling */
     .insight-box {
-        background: #f0f8ff;
+        background: var(--insight-box-bg);
         border-radius: 10px;
         padding: 15px;
         border-left: 4px solid #1a2a6c;
         margin-top: 10px;
         animation: slideIn 0.5s ease-out;
+        color: var(--text-color);
     }
+
+    /* Table styling */
+    table {
+        color: var(--text-color) !important;
+    }
+
     /* Animations */
     @keyframes fadeIn {
         from { opacity: 0; }
@@ -219,11 +283,12 @@ st.markdown("""
         50% { transform: scale(1.05); }
         100% { transform: scale(1); }
     }
+
     /* Tooltip styling */
     .hover-tooltip {
         position: relative;
         display: inline-block;
-        border-bottom: 1px dotted black;
+        border-bottom: 1px dotted var(--text-color);
     }
     .hover-tooltip .tooltip-text {
         visibility: hidden;
@@ -245,6 +310,7 @@ st.markdown("""
         visibility: visible;
         opacity: 1;
     }
+
     /* Clear cache button */
     .clear-cache-btn {
         background: linear-gradient(135deg, #dc3545, #b21f1f) !important;
@@ -255,8 +321,8 @@ st.markdown("""
 # --- HEADER SECTION ---
 st.markdown("""
 <div class="header">
-    <h1>🏨 Hotel Intelligence Dashboard</h1>
-    <p>Advanced analytics platform for hospitality performance optimization and revenue management</p>
+    <h1 style="color:white;">🏨 Hotel Intelligence Dashboard</h1>
+    <p style="color:white;">Advanced analytics platform for hospitality performance optimization and revenue management</p>
 </div>
 """, unsafe_allow_html=True)
 
